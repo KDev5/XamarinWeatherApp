@@ -1,3 +1,6 @@
+
+  <img src="https://github.com/KDev5/XamarinWeatherApp/blob/master/Screenshots/ic_launcher-web.png" width="120px">
+
 # Happy Weather
 
 Happy Weather is a weather app developed in Xamarin Forms and C#. 
