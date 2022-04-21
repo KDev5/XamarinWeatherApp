@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:viewmodels="clr-namespace:WeatherApp.ViewModels"
+             x:DataType="viewmodels:WeatherPageViewModel"
+             xmlns:model="clr-namespace:WeatherApp.Models"
+             xmlns:utilities="clr-namespace:WeatherApp.Utilities"
+             x:Class="WeatherApp.Views.WeatherPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!--Weather Details-->
+            <Style TargetType="Label" x:Key="WeatherDetailsText">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="TextColor" Value="White"/>
+            </Style>
+            <Style TargetType="Label" x:Key="WeatherDetailsTextValues">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="TextColor" Value="White"/>
+            </Style>
+            <Style TargetType="Image" x:Key="WeatherDetailsImage">
+                <Setter Property="HeightRequest" Value="25"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="Opacity" Value="0.7"/>
+            </Style>
+
+            <Style TargetType="Image" x:Key="WeatherIconBackground">
+                <Setter Property="BackgroundColor" Value="RoyalBlue"/>
+                <Setter Property="HeightRequest" Value="60"/>
+                <Setter Property="WidthRequest" Value="60"/>
+            </Style>
+
+            <Style TargetType="Frame" x:Key="WeatherListContainerBackground">
+                <Setter Property="BackgroundColor" Value="GhostWhite"/>
+                <Setter Property="HasShadow" Value="True"/>
+                <Setter Property="CornerRadius" Value="20"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+
+            <!--Converters-->
+            <utilities:TimeConverter x:Key="TimeConverter" />
+            <utilities:TimeHourConverter x:Key="TimeHourConverter"/>
+            <utilities:TimeDateConverter x:Key="TimeDateConverter"/>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <StackLayout.Background>
+                    <LinearGradientBrush StartPoint="0,1"
+                                         EndPoint="1,0">
+                        <GradientStop Color="#F8BC66" 
+                                      Offset="0.1"/>
+                        <GradientStop Color="#0665CF"
+                                      Offset="1.0"/>
+                    </LinearGradientBrush>
+
+                </StackLayout.Background>
+                <Grid BackgroundColor="Transparent" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!--I'm using a grid to place an image behind the stacklayout, then making the stacklayout transparent so the text is still opaque-->
+                    <!--<Image Source="https://picsum.photos/1400" Aspect="AspectFill" Opacity="0.7" Margin="0,0,0,50"/>-->
+                    <StackLayout BackgroundColor="Transparent">
+
+                        <StackLayout Orientation="Vertical" Spacing="5" HorizontalOptions="Fill" VerticalOptions="Start" Margin="0,15">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" Padding="15,0">
+                                <ImageButton Source="map_marker.png" 
+                                             Opacity="0.7"
+                                             BackgroundColor="Transparent" 
+                                             HeightRequest="25" 
+                                             WidthRequest="25" 
+                                             HorizontalOptions="StartAndExpand"
+                                             Command="{Binding GetWeatherData}"/>
+
+                                <Frame Padding="-50, 0" HorizontalOptions="Center" BackgroundColor="Transparent">
+                                    <SearchBar Placeholder="Search Location" Text="{Binding LocationSearchQuery, Mode=TwoWay}" SearchCommand="{Binding GetSearchedWeatherData}" />
+                                </Frame>
+
+
+
+                                <ImageButton Source="search_solid.png" 
+                                             Opacity="0.7"
+                                             BackgroundColor="Transparent" 
+                                             HeightRequest="30" 
+                                             WidthRequest="30" 
+                                             HorizontalOptions="EndAndExpand"
+                                             Clicked="SearchButton_Clicked"/>
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="15,0">
+                                <Label Text="{Binding WeatherAdress.Locality, StringFormat='{0},'}" FontSize="34" VerticalOptions="Start" TextColor="White" HorizontalOptions="Center"/>
+                                <Label Text="{Binding WeatherAdress.CountryCode}" FontSize="22" VerticalOptions="Center" TextColor="White" HorizontalOptions="Center"/>
+                            </StackLayout>
+                            <Label Text="{Binding WeatherData.current.dt, Converter={StaticResource TimeDateConverter}}" TextColor="White" FontSize="16" VerticalOptions="End" HorizontalOptions="Center"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,0,20">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+
+                                <Label Text="{Binding WeatherData.current.temp, StringFormat='{0:N0}°'}" TextColor="White" FontSize="80" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <Label Text="{Binding TemperatureUnitSymbol}" TextColor="White" FontSize="36" VerticalOptions="Center"/>
+                                <Image Source="{Binding WeatherData.current.weather[0].icon, StringFormat='https://openweathermap.org/img/wn/{0}@2x.png'}" WidthRequest="150" HeightRequest="150" VerticalOptions="Center"/>
+                            </StackLayout>
+                            <Label Text="{Binding WeatherData.current.weather[0].description}" 
+                               TextColor="White" 
+                               FontSize="20" 
+                               HorizontalOptions="Center"/>
+                        </StackLayout>
+
+                        <StackLayout>
+                            <Frame BackgroundColor="#800665CF" CornerRadius="20" Margin="10,0" Padding="15">
+                                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <StackLayout Grid.Column="0" Orientation="Vertical" Spacing="10" HorizontalOptions="CenterAndExpand">
+                                        <Image Source="tint_solid.png" Style="{StaticResource WeatherDetailsImage}"/>
+                                        <StackLayout Spacing="7" HorizontalOptions="CenterAndExpand">
+                                            <Label Text="{Binding WeatherData.current.humidity, StringFormat='{0}%'}" Style="{StaticResource WeatherDetailsText}"/>
+                                            <Label Text="Humidity" Style="{StaticResource WeatherDetailsTextValues}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="1" Orientation="Vertical" Spacing="10" HorizontalOptions="CenterAndExpand">
+                                        <Image Source="wind_solid.png" Style="{StaticResource WeatherDetailsImage}"/>
+                                        <StackLayout Spacing="7" HorizontalOptions="CenterAndExpand">
+                                            <Label Text="{Binding WeatherData.current.wind_speed, StringFormat='{0}m/s'}" Style="{StaticResource WeatherDetailsText}"/>
+                                            <Label Text="Wind" Style="{StaticResource WeatherDetailsTextValues}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="2" Orientation="Vertical" Spacing="10" HorizontalOptions="CenterAndExpand">
+                                        <Image Source="tachometer_alt_solid.png" Style="{StaticResource WeatherDetailsImage}"/>
+                                        <StackLayout Spacing="7" HorizontalOptions="CenterAndExpand">
+                                            <Label Text="{Binding WeatherData.current.pressure, StringFormat='{0}'}" Style="{StaticResource WeatherDetailsText}"/>
+                                            <Label Text="Pressure" Style="{StaticResource WeatherDetailsTextValues}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                    <StackLayout Grid.Column="3" Orientation="Vertical" Spacing="10" HorizontalOptions="CenterAndExpand">
+                                        <Image Source="cloud_solid.png" Style="{StaticResource WeatherDetailsImage}"/>
+                                        <StackLayout Spacing="7" HorizontalOptions="CenterAndExpand">
+                                            <Label Text="{Binding WeatherData.current.clouds, StringFormat='{0}%'}" Style="{StaticResource WeatherDetailsText}"/>
+                                            <Label Text="Cloudiness" Style="{StaticResource WeatherDetailsTextValues}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </StackLayout>
+                    </StackLayout>
+                </Grid>
+
+
+                
+
+                <BoxView HeightRequest="1" Color="White" Margin="15"/>
+
+                <Label Text="Hourly Forecast" HorizontalOptions="Center" FontSize="20" FontAttributes="Bold" TextColor="White"/>
+                <ScrollView Orientation="Horizontal"
+                            HorizontalScrollBarVisibility="Never">
+                    <StackLayout
+                      BindableLayout.ItemsSource="{Binding WeatherData.hourly}"
+                      BindableLayout.EmptyView="No weather status here"
+                      BackgroundColor="Transparent"
+                        Orientation="Horizontal">
+
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="model:Hourly">
+                                <Grid Padding="10, 5">
+                                    <Frame Style="{StaticResource WeatherListContainerBackground}">
+                                        <StackLayout Orientation="Vertical">
+                                            <!--<Image Source="{Binding weather[0].icon, StringFormat='http://openweathermap.org/img/wn/{0}@2x.png'}" />-->
+                                            <Frame Padding="0" IsClippedToBounds="True" CornerRadius="20" HasShadow="False">
+                                                <Image Source="{Binding weather[0].icon, StringFormat='https://openweathermap.org/img/wn/{0}@2x.png'}"
+                                               Style="{StaticResource WeatherIconBackground}"/>
+
+                                            </Frame>
+                                            <Label Text="{Binding temp, StringFormat='{0:N0}°'}"
+                                                   VerticalOptions="Center"
+                                               HorizontalOptions="CenterAndExpand"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                               Padding="10, 5"/>
+                                            <StackLayout>
+                                                <Label Text="{Binding weather[0].main}"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                       VerticalOptions="CenterAndExpand"
+                                                   FontSize="16"/>
+                                                <Label Text="{Binding dt, Converter={StaticResource TimeHourConverter}}"
+                                                       x:Name="HourlyWeatherTime"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                       VerticalOptions="CenterAndExpand"
+                                                   FontSize="16"
+                                                       Padding="0,0,0,10"/>
+
+                                            </StackLayout>
+
+                                        </StackLayout>
+                                    </Frame>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                </ScrollView>
+
+
+                <BoxView HeightRequest="1" Color="White" Margin="15"/>
+                <Label Text="Daily Forecast for 8 days" HorizontalOptions="Center" FontSize="20" FontAttributes="Bold" TextColor="White"/>
+                <StackLayout
+                      BindableLayout.ItemsSource="{Binding WeatherData.daily}"
+                      BindableLayout.EmptyView="No weather status here"
+                      BackgroundColor="Transparent">
+
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="model:Daily">
+                            <Grid Padding="10, 5">
+                                <Frame Style="{StaticResource WeatherListContainerBackground}">
+                                    <StackLayout Orientation="Horizontal">
+                                        <!--<Image Source="{Binding weather[0].icon, StringFormat='http://openweathermap.org/img/wn/{0}@2x.png'}" />-->
+                                        <Frame Padding="0" IsClippedToBounds="True" CornerRadius="20" HasShadow="False">
+                                            <Image Source="{Binding weather[0].icon, StringFormat='https://openweathermap.org/img/wn/{0}@2x.png'}"
+                                               Style="{StaticResource WeatherIconBackground}"
+                                               />
+                                        </Frame>
+                                        <Label Text="{Binding temp.day, StringFormat='{0:N0}°'}"
+                                                   VerticalOptions="Center"
+                                               HorizontalOptions="StartAndExpand"
+                                                   FontSize="20"
+                                               Padding="10"
+                                               FontAttributes="Bold"/>
+
+                                        <Label Text="{Binding weather[0].description}"
+                                                   VerticalOptions="CenterAndExpand"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                   FontSize="16"/>
+                                        <Label Text="{Binding dt, Converter={StaticResource TimeConverter}}"
+                                                   FontAttributes="Bold"
+                                                   VerticalOptions="CenterAndExpand"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   FontSize="16"
+                                                   Padding="0,0,10,0"/>
+
+                                    </StackLayout>
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+
+                <!--This was used for debug purposes-->
+                
+                <!--<ScrollView>
+
+                    <StackLayout BackgroundColor="Beige">
+                        <Label Text="THIS IS THE MAIN WEATHER PAGE"
+                HorizontalOptions="CenterAndExpand" />
+
+                        <Button Text="Load Weather Data"
+                    Command="{Binding GetWeatherData}"/>
+                        <Button Text="Get Adress for weather"
+                                Command="{Binding GetWeatherAdress}"/>
+                        <Button Text="Open search" Clicked="Button_Clicked"></Button>
+                        <StackLayout Orientation="Horizontal">
+                            <StackLayout HorizontalOptions="CenterAndExpand">
+                                <Label Text="Current temp is:"/>
+                                <Label Text="{Binding WeatherData.current.temp}"/>
+                                <Label Text="{Binding WeatherData.lat}"/>
+                                <Label Text="{Binding WeatherData.lon}"/>
+
+                            </StackLayout>
+                            <StackLayout HorizontalOptions="CenterAndExpand">
+                                <Label Text="Daily 1 temp"/>
+                                <Label Text="{Binding WeatherData.daily[1].temp.day}"/>
+                                <Label Text="{Binding WeatherData.daily[1].temp.night}"/>
+                                <Label Text="{Binding WeatherData.current.weather[0].description}"/>
+                                <Label Text="{Binding WeatherData.current.dt}"/>
+
+                            </StackLayout>
+
+                        </StackLayout>
+
+                        <Image x:Name="cloudImage" 
+                       Source="https://icon-library.com/images/cloud-icon-png/cloud-icon-png-27.jpg"
+                       HeightRequest="30"
+                       WidthRequest="30"/>
+
+                    </StackLayout>
+                </ScrollView>-->
+
+                <Label Text="Data fetched from Openweathermap.org" HorizontalOptions="Center"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Settings"
+             xmlns:viewmodels="clr-namespace:WeatherApp.ViewModels"
+             x:DataType="viewmodels:SettingsPageViewModel"
+             xmlns:model="clr-namespace:WeatherApp.Models"
+             BackgroundColor="#0665CF"
+             x:Class="WeatherApp.Views.SettingsPage">
+
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Frame Padding="15" CornerRadius="10" Margin="10">
+                <StackLayout Orientation="Horizontal">
+
+                    <Label Text="Units" VerticalOptions="Center" FontSize="16"/>
+                    <Label x:Name="unitsLabel" 
+                           Text="{Binding IsMetricUnitsLabel}" 
+                           TextColor="Black" 
+                           HorizontalOptions="EndAndExpand"
+                           VerticalOptions="Center"/>
+                    <Switch IsToggled="{Binding IsMetricUnits}" 
+                            x:Name="unitsSwitch" 
+                            OnColor="LightGoldenrodYellow"
+                            Toggled="unitsSwitch_Toggled"
+                            HorizontalOptions="End">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="On">
+                                    <VisualState.Setters>
+                                        <Setter Property="ThumbColor"
+                            Value="CornFlowerBlue" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Off">
+                                    <VisualState.Setters>
+                                        <Setter Property="ThumbColor"
+                            Value="Gold" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Switch>
+
+                </StackLayout>
+            </Frame>
+            <Frame Padding="15" CornerRadius="10" Margin="10">
+                <StackLayout Orientation="Horizontal">
+
+                    <Label Text="Theme" VerticalOptions="Center" FontSize="16"/>
+                    <Label x:Name="themeLabel" 
+                           Text="Light mode" 
+                           TextColor="Black" 
+                           HorizontalOptions="EndAndExpand"
+                           VerticalOptions="Center"/>
+                    <Switch IsToggled="True" 
+                        HorizontalOptions="End"
+                            OnColor="LightGoldenrodYellow"
+                            Toggled="ThemeSwitch_Toggled">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="On">
+                                    <VisualState.Setters>
+                                        <Setter Property="ThumbColor"
+                            Value="LightBlue" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Off">
+                                    <VisualState.Setters>
+                                        <Setter Property="ThumbColor"
+                            Value="DarkBlue" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Switch>
+
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
