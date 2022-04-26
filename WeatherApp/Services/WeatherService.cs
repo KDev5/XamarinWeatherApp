@@ -12,7 +12,7 @@ namespace WeatherApp.Services
     class WeatherService
     {
         private string BASE_URL = "https://api.openweathermap.org/data/2.5/onecall?";
-        private string API_KEY = "9667864ac7f1558ee72b90a151db6ad7";
+        private string API_KEY = "API KEY HERE";
 
         HttpClient client;
 
